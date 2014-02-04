@@ -1,5 +1,22 @@
-Ripoff of Adobe Dreamweaver.
+A ripoff of Adobe Dreamweaver.
 
+# Quickstart
 
-LICENSE: serious business license. give me some money.
+    tup init
+    tup upd
+
+    
+Then open `index.html` in browser.
+
+`tup` is: http://gittup.org/gittup/
+
+# Development
+
+    tup monitor -a
+
+will monitor file changes and compile.
+
+To stop monitoring daemon,
+
+    tup stop
 
