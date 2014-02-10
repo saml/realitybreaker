@@ -6,3 +6,5 @@ __pycache__/
 *.pid
 *.log
 *.min.js
+build/
+node_modules/

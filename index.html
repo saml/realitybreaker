@@ -2,20 +2,25 @@
 <meta charset="utf-8">
 <title>Hello</title>
 <style>
-#editme {
+#input {
     border: 1px solid;
     float: left;
-    width: 49%;
+    width: 48%;
+    height: 90vh;
 }
-#html {
+#output {
     border: 1px solid red;
     float: right;
-    width: 49%;
+    width: 48%;
+    height: 90vh;
 }
 </style>
 <body>
-<div id="controls"></div>
-<div id="editme"></div>
-<textarea id="html"></textarea>
-<script src="main.min.js"></script>
+<div id="wrap">
+    <div id="input" contenteditable></div>
+</div>
+<textarea id="output"></textarea>
+<button id="tohtml">To HTML</button>
+<button id="reinput">Re-input</button>
+<script src="build/main.js"></script>
 </body>
