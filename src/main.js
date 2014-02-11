@@ -13,7 +13,7 @@ var BAD_ATTRIBUTES = {
 };
 
 function trim(input) {
-    return input.replace(/^\s+/, '').replace(/\s+$/, '');
+    return input.replace(/^\s+/, ' ').replace(/\s+$/, ' ');
 }
 
 function writeln(output, line, level, insertWhitespace) {
@@ -53,7 +53,7 @@ function printNode(node, output, prevLevel, level) {
         writeln(output, '<' + node.nodeName.toLowerCase() + attributesToString(node) + '>', level, !isInlineElement(node));
         break;
     case 3: //text
-        writeln(output, node.nodeValue, prevLevel);
+        writeln(output, trim(node.nodeValue), prevLevel);
         break;
     case 2:
         alert(node);
