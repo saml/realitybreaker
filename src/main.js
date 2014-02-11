@@ -13,6 +13,9 @@ var BAD_ATTRIBUTES = {
 };
 
 function trim(input) {
+    if (/^\s+$/.exec(input)) {
+        return '';
+    }
     return input.replace(/^\s+/, ' ').replace(/\s+$/, ' ');
 }
 
@@ -46,11 +49,17 @@ function isInlineElement(node) {
     return node.nodeName.toLowerCase() in INLINE_ELEMENTS;
 }
 
+function shouldIndent(prevNode, node) {
+    //console.log(prevNode && prevNode.nodeName, node && node.nodeName);
+    var prevWhitespace = prevNode && prevNode.nodeType === 3 && /^\s+$/.exec(prevNode.nodeValue);
+    var prevBlocklevel = prevNode && prevNode.nodeType === 1 && !isInlineElement(prevNode) && prevNode.nodeName.toLowerCase() !== 'pre';
+    return prevWhitespace || prevBlocklevel || (node.nodeType === 1 && !isInlineElement(node));
+}
 
-function printNode(node, output, prevLevel, level) {
+function printNode(prevNode, node, output, prevLevel, level) {
     switch (node.nodeType) {
     case 1: //element
-        writeln(output, '<' + node.nodeName.toLowerCase() + attributesToString(node) + '>', level, !isInlineElement(node));
+        writeln(output, '<' + node.nodeName.toLowerCase() + attributesToString(node) + '>', level, shouldIndent(prevNode, node));
         break;
     case 3: //text
         writeln(output, trim(node.nodeValue), prevLevel);
@@ -61,24 +70,25 @@ function printNode(node, output, prevLevel, level) {
     }
 }
 
-function closeNode(node, output, level) {
+function closeNode(prevNode, node, output, level) {
     if (node.nodeType === 1 && node.childNodes.length > 0) {
         writeln(output, '</' + node.nodeName.toLowerCase() + '>', level, !isInlineElement(node));
     }
 }
 
-function prettyPrintRecurr(node, output, level) {
+function prettyPrintRecurr(prevNode, node, output, level) {
     while (node) {
-        printNode(node, output, level, level);
-        prettyPrintRecurr(node.firstChild, output, level+1);
-        closeNode(node, output, level);
+        printNode(prevNode, node, output, level, level);
+        prettyPrintRecurr(node, node.firstChild, output, level+1);
+        closeNode(prevNode, node, output, level);
+        prevNode = node;
         node = node.nextSibling;
     }
 }
 
 function prettyPrint(node, output) {
     output.innerHTML = '';
-    prettyPrintRecurr(node.firstChild, output, 0);
+    prettyPrintRecurr(null, node.firstChild, output, 0);
 }
 
 function main() {
