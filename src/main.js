@@ -53,7 +53,7 @@ function printNode(node, output, prevLevel, level) {
         writeln(output, '<' + node.nodeName.toLowerCase() + attributesToString(node) + '>', level, !isInlineElement(node));
         break;
     case 3: //text
-        writeln(output, trim(node.nodeValue), prevLevel);
+        writeln(output, node.nodeValue, prevLevel);
         break;
     case 2:
         alert(node);
@@ -84,17 +84,39 @@ function prettyPrint(node, output) {
 function main() {
     var reinput = document.getElementById('reinput');
     var tohtml = document.getElementById('tohtml');
-    reinput.onclick = function () {
-        var output = document.getElementById('output');
-        var input = document.getElementById('input');
+    var output = document.getElementById('output');
+    var input = document.getElementById('input');
+    function reinputClickHandler() {
         input.innerHTML = output.textContent;
         prettyPrint(input, output);
-    };
-    tohtml.onclick = function () {
-        var output = document.getElementById('output');
-        var input = document.getElementById('input');
+    }
+
+    function tohtmlClickHandler() {
         prettyPrint(input, output);
-    };
+    }
+
+    function inputOnBlur() {
+        removeEvents();
+        window.setTimeout(function() {
+            prettyPrint(input, output);
+            input.innerHTML = output.textContent;
+            addEvents();
+        }, 10);
+    }
+
+    function addEvents() {
+        input.addEventListener('blur', inputOnBlur);
+        tohtml.addEventListener('click', tohtmlClickHandler);
+        reinput.addEventListener('click', reinputClickHandler);
+    }
+
+    function removeEvents() {
+        input.removeEventListener('blur', inputOnBlur);
+        tohtml.removeEventListener('click', tohtmlClickHandler);
+        reinput.removeEventListener('click', reinputClickHandler);
+    }
+
+    addEvents();
 }
 
 main();
