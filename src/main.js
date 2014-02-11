@@ -6,6 +6,11 @@ var INLINE_ELEMENTS = {
     a:true, bdo:true, br:true, img:true, map:true, object:true, q:true, script:true, span:true, sub:true, sup:true,
     button:true, input:true, label:true, select:true, textarea:true
 };
+var BAD_ATTRIBUTES = {
+    style:true,
+    'class':true,
+    id:true
+};
 
 function trim(input) {
     return input.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -26,10 +31,12 @@ function attributesToString(node) {
     var buffer = [''];
     for (var i = 0; i < n; i++) {
         var attrib = attributes.item(i);
-        if (attrib.value) {//for attribute="false" might fail.
-            buffer.push(attrib.name + '="' + attrib.value + '"');
-        } else {
-            buffer.push(attrib.name);
+        if (!(attrib.name.toLowerCase() in BAD_ATTRIBUTES)) {
+            if (attrib.value) {//for attribute="false" might fail.
+                buffer.push(attrib.name + '="' + attrib.value + '"');
+            } else {
+                buffer.push(attrib.name);
+            }
         }
     }
     return buffer.join(' ');
@@ -56,7 +63,7 @@ function printNode(node, output, prevLevel, level) {
 
 function closeNode(node, output, level) {
     if (node.nodeType === 1 && node.childNodes.length > 0) {
-        writeln(output, '</' + node.nodeName.toLowerCase() + '>', level);
+        writeln(output, '</' + node.nodeName.toLowerCase() + '>', level, !isInlineElement(node));
     }
 }
 
@@ -72,7 +79,6 @@ function prettyPrintRecurr(node, output, level) {
 function prettyPrint(node, output) {
     output.innerHTML = '';
     prettyPrintRecurr(node.firstChild, output, 0);
-    //closeNode(node, output, 0);
 }
 
 function main() {
